@@ -5,6 +5,7 @@ class NullPiece
   include Singleton
 
   def moves
+    []
   end
 
   def color
@@ -13,9 +14,13 @@ class NullPiece
   def valid_moves
     []
   end
-  
+
   def to_s
     "\u{25A2}".black
+  end
+
+  def dup
+    self
   end
 
   def empty?

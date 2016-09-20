@@ -1,6 +1,9 @@
 require 'colorize'
 
 class Piece
+  attr_reader :color
+  attr_accessor :board, :pos
+
   def initialize(color, board, pos)
     @color = color
     @board = board
@@ -20,6 +23,10 @@ class Piece
 
   def empty?
     false
+  end
+
+  def valid_move?(end_pos)
+    valid_moves.include?(end_pos)
   end
 
   def valid_moves
@@ -54,6 +61,7 @@ class SteppingPiece < Piece
     end
 
     moves.delete_if { |move| !on_board?(move) }
+    moves.delete_if { |move| @board[move].color == color }
   end
 end
 
@@ -127,7 +135,7 @@ class SlidingPiece < Piece
     x += dx
     y += dy
 
-    until !on_board?([x, y]) && @board[[x,y]].is_a?(Piece)
+    until !on_board?([x, y]) || @board[[x,y]].is_a?(Piece)
       moves << [x,y]
       x += dx
       y += dy
@@ -221,6 +229,7 @@ class Pawn < Piece
   def forward_steps
     moves = [forward_dir]
     moves << [forward_dir[0] * 2, 0] if at_start_row?
+    moves
   end
 
   def side_attacks

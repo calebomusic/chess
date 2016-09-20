@@ -48,17 +48,13 @@ class Board
   end
 
   def move!(start, end_pos)
-    unless self[start].valid_moves.include?(end_pos)
-      raise "Can't move there"
-    end
-
     self[end_pos] = self[start]
+    self[start].pos = end_pos
     self[start] = NullPiece.instance
     self
   end
 
   def move(start, end_pos)
-    duped_board = dup
     dup.move!(start, end_pos)
   end
 
@@ -67,14 +63,19 @@ class Board
     @grid.each_with_index do |row, i|
       row.each_with_index do |piece, j|
         new_piece = piece.dup
-        new_piece.board = new_board
         new_board[[i,j]] = new_piece
+
+        next if piece.is_a?(NullPiece)
+        new_piece.board = new_board
+        new_piece.pos = piece.pos.dup
       end
     end
+
+    new_board
   end
 
   def checkmate?
-    checkmate?(:white) || checkmate?(:black)
+    checkmate_color?(:white) || checkmate_color?(:black)
   end
 
   def in_check?(color)
@@ -82,7 +83,7 @@ class Board
     @grid.each do |row|
       row.each do |piece|
         unless piece.color == color
-          if piece.valid_moves.include?(king.pos)
+          if piece.moves.include?(king.pos)
             return true
           end
         end
@@ -91,7 +92,7 @@ class Board
     false
   end
 
-  def checkmate?(color)
+  def checkmate_color?(color)
     @grid.flatten.each do |piece|
       # next if piece.is_a?(NullPiece)
       if piece.color == color && !piece.valid_moves.empty?

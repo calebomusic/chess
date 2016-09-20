@@ -77,7 +77,7 @@ class Cursor
 
   def handle_key(key)
     if key == :return || key == :space
-      @cursor_pos
+      :select
     else
       update_pos(MOVES[key])
     end
