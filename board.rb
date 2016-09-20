@@ -1,4 +1,8 @@
+require_relative "piece"
+require_relative "null_piece"
+
 class Board
+  attr_reader :grid
 
   def self.empty_grid
     Board.new(Array.new(8) { Array.new(8) })
@@ -18,15 +22,15 @@ class Board
   end
 
   def configure_grid
-    set_base_row(:black, self, 0)
-    set_pawn_row(:black, self, 1)
+    set_base_row(0, :black)
+    set_pawn_row(1, :black)
 
     (2..5).each do |row|
       nullpiece_row(row)
     end
 
-    set_pawn_row(:white, self, 6)
-    set_base_row(:white, self, 7)
+    set_pawn_row(6, :white)
+    set_base_row(7, :white)
   end
 
   def [](pos)
@@ -36,12 +40,17 @@ class Board
 
   def []=(pos, piece)
     row, col = pos
-    grid[row][col] = piece
+    @grid[row][col] = piece
+  end
+
+  def length
+    @grid.length
   end
 
   def move!(start, end_pos)
     self[end_pos] = self[start]
-    self[start] = NullPiece.new
+    self[start] = NullPiece.instance
+    self
   end
 
   def move(start, end_pos)
@@ -57,6 +66,28 @@ class Board
         new_piece.board = new_board
         new_board[[i,j]] = new_piece
       end
+    end
+  end
+
+  def checkmate?
+    checkmate?(:white) || checkmate?(:black)
+  end
+
+  def checkmate?(color)
+    @grid.flatten.each do |piece|
+      # next if piece.is_a?(NullPiece)
+      if piece.color == color && !piece.valid_moves.empty?
+        return false
+      end
+    end
+
+    true
+  end
+
+  protected
+  def find_king(color)
+    @grid.flatten.each do |piece|
+      return piece if piece.is_a?(King) && piece.color == color
     end
   end
 
@@ -79,8 +110,10 @@ class Board
   end
 
   def nullpiece_row(row_number)
-    @grid[row_number].each do |space|
-      space = NullPiece.new
-    end
+    @grid[row_number] = @grid[row_number].map { |piece| NullPiece.instance }
+
+    # @grid[row_number].each do |space|
+    #   space = NullPiece.instance
+    # end
   end
 end
