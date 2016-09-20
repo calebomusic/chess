@@ -48,6 +48,10 @@ class Board
   end
 
   def move!(start, end_pos)
+    unless self[start].valid_moves.include?(end_pos)
+      raise "Can't move there"
+    end
+
     self[end_pos] = self[start]
     self[start] = NullPiece.instance
     self
@@ -71,6 +75,20 @@ class Board
 
   def checkmate?
     checkmate?(:white) || checkmate?(:black)
+  end
+
+  def in_check?(color)
+    king = find_king(color)
+    @grid.each do |row|
+      row.each do |piece|
+        unless piece.color == color
+          if piece.valid_moves.include?(king.pos)
+            return true
+          end
+        end
+      end
+    end
+    false
   end
 
   def checkmate?(color)

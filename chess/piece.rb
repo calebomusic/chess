@@ -15,9 +15,24 @@ class Piece
   def symbol
   end
 
+  def moves
+  end
+
   def empty?
     false
   end
+
+  def valid_moves
+    valid_moves = []
+    moves.each do |end_pos|
+      unless @board.move(@pos, end_pos).in_check?(@color)
+        valid_moves << end_pos
+      end
+    end
+
+    valid_moves
+  end
+
 
   def move_into_check?(to_pos)
     @board.move(@pos, to_pos).in_check?(@color)
