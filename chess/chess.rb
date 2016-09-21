@@ -32,9 +32,42 @@ class Chess
       notify_players
       start, end_pos = @current_player.make_move
       @board.move!(start, end_pos)
+      handle_pawn_promotion
     rescue RuntimeError => e
       puts e.message
       retry
+    end
+  end
+
+  def handle_pawn_promotion
+    promotable = @board.grid.flatten.select do |piece|
+      piece.is_a?(Pawn) && (piece.pos[0] == 0 || piece.pos[0] == 7)
+    end
+
+    unless promotable.empty?
+      promote(promotable.first)
+    end
+  end
+
+  def promote(piece)
+    puts "Please type the name of the piece you want to promote your pawn to?"
+    answer = gets.chomp.downcase
+
+    color = piece.color
+    pos = piece.pos
+
+    case answer
+    when 'bishop'
+      @board[pos] = Bishop.new(color, @board, pos)
+    when 'knight'
+      @board[pos] = Knight.new(color, @board, pos)
+    when 'rook'
+      @board[pos] = Rook.new(color, @board, pos)
+    when 'easter egg'
+      # seriously this is not a bug :D
+      @board[pos] = King.new(color, @board, pos)
+    else
+      @board[pos] = Queen.new(color, @board, pos)
     end
   end
 

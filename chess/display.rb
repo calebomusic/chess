@@ -1,6 +1,7 @@
 require_relative 'cursor'
 require_relative 'board'
 require 'colorize'
+
 class Display
   attr_reader :cursor
   attr_accessor :board
@@ -31,9 +32,6 @@ class Display
     end
 
     puts "Check, mate!" if @board.in_check?(:black) || @board.in_check?(:white)
-  end
-
-  def last_move_tiles
   end
 
   def draw_horiz_line
