@@ -1,7 +1,6 @@
 require_relative 'board'
 require_relative 'display'
 require_relative 'player'
-require 'byebug'
 
 class Chess
   def initialize(player1, player2)

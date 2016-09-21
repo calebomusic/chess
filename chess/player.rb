@@ -1,4 +1,3 @@
-require "byebug"
 class Player
   attr_reader :name, :color
   attr_accessor :display

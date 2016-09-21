@@ -17,18 +17,23 @@ class Display
     @board.grid.each_with_index do |row, i|
       row_str = "#{8 - i} |"
       row.each_with_index do |piece, j|
-        if @cursor.cursor_pos == [i, j]
+        pos = [i, j]
+
+        if @cursor.cursor_pos == pos
           row_str << " #{piece} ".cyan << "|"
         else
           row_str << " #{piece} |"
         end
       end
-      
+
       puts row_str
       draw_horiz_line
     end
 
     puts "Check, mate!" if @board.in_check?(:black) || @board.in_check?(:white)
+  end
+
+  def last_move_tiles
   end
 
   def draw_horiz_line

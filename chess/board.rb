@@ -1,8 +1,8 @@
-require_relative "piece"
-require_relative "null_piece"
+require 'require_all'
+require_all "pieces/"
 
 class Board
-  attr_reader :grid
+  attr_reader :grid, :log
 
   def self.empty_grid
     Board.new(Array.new(8) { Array.new(8) })
@@ -14,6 +14,7 @@ class Board
     else
       default_grid
     end
+    @log = []
   end
 
   def default_grid
@@ -48,10 +49,19 @@ class Board
   end
 
   def move!(start, end_pos)
+    handle_en_passant(self[start], start, end_pos)
     self[end_pos] = self[start]
-    self[start].pos = end_pos
+    self[end_pos].update_pos(end_pos)
     self[start] = NullPiece.instance
+    @log << [ self[end_pos], start, end_pos ]
     self
+  end
+
+  def handle_en_passant(piece, start, end_pos)
+    if piece.is_a?(Pawn) && start[1] != end_pos[1] && self[end_pos].is_a?(NullPiece)
+      pos = [start[0], end_pos[1]]
+      self[pos] = NullPiece.instance
+    end
   end
 
   def move(start, end_pos)
@@ -68,6 +78,7 @@ class Board
         next if piece.is_a?(NullPiece)
         new_piece.board = new_board
         new_piece.pos = piece.pos.dup
+        new_piece.prev_pos = piece.prev_pos.dup
       end
     end
 
