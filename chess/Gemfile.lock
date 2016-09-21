@@ -1,0 +1,12 @@
+GEM
+  specs:
+    require_all (1.3.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  require_all
+
+BUNDLED WITH
+   1.12.5
