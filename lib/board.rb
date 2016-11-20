@@ -1,5 +1,5 @@
 require 'require_all'
-require_all "pieces/"
+require_all 'lib/pieces'
 
 class Board
   attr_reader :grid, :log
